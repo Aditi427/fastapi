@@ -13,9 +13,13 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ChangeIncomeBudgetRouteImport } from './routes/change-income-budget'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as AddExpenseRouteImport } from './routes/add-expense'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
-import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 
@@ -39,6 +43,31 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExpensesRoute = ExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangeIncomeBudgetRoute = ChangeIncomeBudgetRouteImport.update({
+  id: '/change-income-budget',
+  path: '/change-income-budget',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddExpenseRoute = AddExpenseRouteImport.update({
+  id: '/add-expense',
+  path: '/add-expense',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
@@ -46,11 +75,6 @@ const LayoutRoute = LayoutRouteImport.update({
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutItemsRoute = LayoutItemsRouteImport.update({
@@ -65,73 +89,102 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/add-expense': typeof AddExpenseRoute
+  '/analytics': typeof AnalyticsRoute
+  '/change-income-budget': typeof ChangeIncomeBudgetRoute
+  '/dashboard': typeof DashboardRoute
+  '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/items': typeof LayoutItemsRoute
-  '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesByTo {
+  '/add-expense': typeof AddExpenseRoute
+  '/analytics': typeof AnalyticsRoute
+  '/change-income-budget': typeof ChangeIncomeBudgetRoute
+  '/dashboard': typeof DashboardRoute
+  '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/items': typeof LayoutItemsRoute
-  '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/add-expense': typeof AddExpenseRoute
+  '/analytics': typeof AnalyticsRoute
+  '/change-income-budget': typeof ChangeIncomeBudgetRoute
+  '/dashboard': typeof DashboardRoute
+  '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/items': typeof LayoutItemsRoute
-  '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/add-expense'
+    | '/analytics'
+    | '/change-income-budget'
+    | '/dashboard'
+    | '/expenses'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
     | '/items'
-    | '/settings'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/add-expense'
+    | '/analytics'
+    | '/change-income-budget'
+    | '/dashboard'
+    | '/expenses'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
     | '/items'
-    | '/settings'
     | '/'
   id:
     | '__root__'
     | '/_layout'
+    | '/add-expense'
+    | '/analytics'
+    | '/change-income-budget'
+    | '/dashboard'
+    | '/expenses'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
     | '/_layout/items'
-    | '/_layout/settings'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
+  AddExpenseRoute: typeof AddExpenseRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  ChangeIncomeBudgetRoute: typeof ChangeIncomeBudgetRoute
+  DashboardRoute: typeof DashboardRoute
+  ExpensesRoute: typeof ExpensesRoute
   LoginRoute: typeof LoginRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -168,6 +221,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/expenses': {
+      id: '/expenses'
+      path: '/expenses'
+      fullPath: '/expenses'
+      preLoaderRoute: typeof ExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-income-budget': {
+      id: '/change-income-budget'
+      path: '/change-income-budget'
+      fullPath: '/change-income-budget'
+      preLoaderRoute: typeof ChangeIncomeBudgetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-expense': {
+      id: '/add-expense'
+      path: '/add-expense'
+      fullPath: '/add-expense'
+      preLoaderRoute: typeof AddExpenseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout': {
       id: '/_layout'
       path: ''
@@ -180,13 +268,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/settings': {
-      id: '/_layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof LayoutSettingsRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/items': {
@@ -209,14 +290,12 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutItemsRoute: typeof LayoutItemsRoute
-  LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutItemsRoute: LayoutItemsRoute,
-  LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 
@@ -225,6 +304,11 @@ const LayoutRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
+  AddExpenseRoute: AddExpenseRoute,
+  AnalyticsRoute: AnalyticsRoute,
+  ChangeIncomeBudgetRoute: ChangeIncomeBudgetRoute,
+  DashboardRoute: DashboardRoute,
+  ExpensesRoute: ExpensesRoute,
   LoginRoute: LoginRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,

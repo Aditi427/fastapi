@@ -1,53 +1,111 @@
-import { Container, Heading, Tabs } from "@chakra-ui/react"
-import { createFileRoute } from "@tanstack/react-router"
+import {
+  Box,
+  Button,
+  Grid,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 
-import Appearance from "@/components/UserSettings/Appearance"
-import ChangePassword from "@/components/UserSettings/ChangePassword"
-import DeleteAccount from "@/components/UserSettings/DeleteAccount"
-import UserInformation from "@/components/UserSettings/UserInformation"
-import useAuth from "@/hooks/useAuth"
-
-const tabsConfig = [
-  { value: "my-profile", title: "My profile", component: UserInformation },
-  { value: "password", title: "Password", component: ChangePassword },
-  { value: "appearance", title: "Appearance", component: Appearance },
-  { value: "danger-zone", title: "Danger zone", component: DeleteAccount },
-]
-
-export const Route = createFileRoute("/_layout/settings")({
-  component: UserSettings,
-})
-
-function UserSettings() {
-  const { user: currentUser } = useAuth()
-  const finalTabs = currentUser?.is_superuser
-    ? tabsConfig.slice(0, 3)
-    : tabsConfig
-
-  if (!currentUser) {
-    return null
-  }
-
+export default function FinanceSettings() {
   return (
-    <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} py={12}>
-        User Settings
-      </Heading>
+    <Box
+      mt={6}
+      bg="#151518"
+      p={10}
+      rounded="3xl"
+      border="1px solid #2A2A2F"
+      shadow="2xl"
+    >
+      <Text
+        fontSize="3xl"
+        fontWeight="bold"
+        mb={2}
+        bgGradient="linear(to-r, #8B5CF6, #C084FC)"
+        bgClip="text"
+      >
+        Financial Settings
+      </Text>
 
-      <Tabs.Root defaultValue="my-profile" variant="subtle">
-        <Tabs.List>
-          {finalTabs.map((tab) => (
-            <Tabs.Trigger key={tab.value} value={tab.value}>
-              {tab.title}
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-        {finalTabs.map((tab) => (
-          <Tabs.Content key={tab.value} value={tab.value}>
-            <tab.component />
-          </Tabs.Content>
-        ))}
-      </Tabs.Root>
-    </Container>
+      <Text
+        mb={10}
+        color="gray.400"
+      >
+        Set your income and monthly spending budget.
+      </Text>
+
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          md: "1fr 1fr",
+        }}
+        gap={8}
+      >
+        <VStack align="stretch">
+          <Text
+            color="gray.300"
+            fontWeight="semibold"
+          >
+            Monthly Income
+          </Text>
+
+          <Input
+            placeholder="Enter monthly income"
+            type="number"
+            size="lg"
+            bg="#242429"
+            color="white"
+            border="1px solid #3A3A40"
+            rounded="2xl"
+            _placeholder={{
+              color: "gray.500",
+            }}
+            _focusVisible={{
+              borderColor: "#8B5CF6",
+              boxShadow: "0 0 0 1px #8B5CF6",
+            }}
+          />
+        </VStack>
+
+        <VStack align="stretch">
+          <Text
+            color="gray.300"
+            fontWeight="semibold"
+          >
+            Monthly Budget
+          </Text>
+
+          <Input
+            placeholder="Enter monthly budget"
+            type="number"
+            size="lg"
+            bg="#242429"
+            color="white"
+            border="1px solid #3A3A40"
+            rounded="2xl"
+            _placeholder={{
+              color: "gray.500",
+            }}
+            _focusVisible={{
+              borderColor: "#8B5CF6",
+              boxShadow: "0 0 0 1px #8B5CF6",
+            }}
+          />
+        </VStack>
+      </Grid>
+
+      <Button
+        mt={10}
+        size="lg"
+        bg="#8B5CF6"
+        color="white"
+        rounded="2xl"
+        _hover={{
+          bg: "#7C3AED",
+        }}
+      >
+        Save Settings
+      </Button>
+    </Box>
   )
 }

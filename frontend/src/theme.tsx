@@ -6,24 +6,34 @@ export const system = createSystem(defaultConfig, {
     html: {
       fontSize: "16px",
     },
+
     body: {
-      fontSize: "0.875rem",
+      fontSize: "0.95rem",
       margin: 0,
       padding: 0,
+      fontFamily: "Inter, sans-serif",
+      transition: "0.3s ease",
     },
+
+    "*": {
+      boxSizing: "border-box",
+    },
+
     ".main-link": {
-      color: "ui.main",
+      color: "#8B5CF6",
       fontWeight: "bold",
     },
   },
+
   theme: {
     tokens: {
       colors: {
         ui: {
-          main: { value: "#009688" },
+          main: { value: "#8B5CF6" },
         },
       },
     },
+
     recipes: {
       button: buttonRecipe,
     },
