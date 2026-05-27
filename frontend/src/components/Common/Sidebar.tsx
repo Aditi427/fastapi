@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 
 import {
   FiBarChart2,
-  FiCreditCard,
   FiDollarSign,
   FiHome,
   FiSettings,

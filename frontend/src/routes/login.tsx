@@ -1,4 +1,4 @@
-import { Container, Flex, Image, Input, Text } from "@chakra-ui/react"
+import { Container, Flex, Input, Text } from "@chakra-ui/react"
 
 import {
   createFileRoute,

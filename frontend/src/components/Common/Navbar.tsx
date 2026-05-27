@@ -5,11 +5,10 @@ import {
   HStack,
   IconButton,
   Input,
-  Menu,
   Text,
 } from "@chakra-ui/react"
 
-import { FiBell, FiLogOut, FiMoon, FiSearch, FiSun, FiUser } from "react-icons/fi"
+import { FiBell, FiLogOut, FiMoon, FiSearch, FiSun } from "react-icons/fi"
 import { useTheme } from "next-themes"
 import { useNavigate } from "@tanstack/react-router"
 
