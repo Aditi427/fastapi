@@ -35,4 +35,6 @@ COPY ./app /app/app
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN uv sync
 
-CMD ["fastapi", "run", "--workers", "4", "app/main.py"]
+# FIXED: Use uvicorn directly with PORT environment variable
+# The shell form (without JSON array) allows ${PORT} to be expanded
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
