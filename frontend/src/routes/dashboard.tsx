@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { useEffect, useState } from "react"
 
 import {
   Box,
@@ -7,17 +8,48 @@ import {
   Heading,
   Text,
   VStack,
+  Spinner,
+  Center,
 } from "@chakra-ui/react"
 
 import AppLayout from "@/components/layout/AppLayout"
 import ExpenseTable from "@/components/expenses/ExpenseTable"
 import StatsCard from "@/components/expenses/StatsCard"
+import { expenseService, type DashboardStats } from "@/services/expenseService"
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
 })
 
 function Dashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadDashboardData()
+  }, [])
+
+  const loadDashboardData = async () => {
+    try {
+      const data = await expenseService.getDashboardStats()
+      setStats(data)
+    } catch (error) {
+      console.error('Failed to load dashboard:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <Center h="50vh">
+          <Spinner size="xl" color="#8B5CF6" />
+        </Center>
+      </AppLayout>
+    )
+  }
+
   return (
     <AppLayout>
       <VStack align="stretch" gap={8}>
@@ -44,13 +76,22 @@ function Dashboard() {
           </Text>
         </Box>
 
-        <Grid templateColumns="repeat(3,1fr)" gap={6}>
-          <StatsCard title="Total Spent" value="₹12,500" />
-          <StatsCard title="Transactions" value="48" />
-          <StatsCard title="Top Category" value="Food" />
+        <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
+          <StatsCard 
+            title="Total Expenses" 
+            value={`₹${stats?.total_expenses?.toFixed(2) || "0"}`} 
+          />
+          <StatsCard 
+            title="Total Income" 
+            value={`₹${stats?.total_income?.toFixed(2) || "0"}`} 
+          />
+          <StatsCard 
+            title="Savings" 
+            value={`₹${stats?.savings?.toFixed(2) || "0"}`}
+          />
         </Grid>
 
-        <Grid templateColumns="2fr 1fr" gap={6}>
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
           <GridItem>
             <ExpenseTable />
           </GridItem>
@@ -61,13 +102,34 @@ function Dashboard() {
               rounded="3xl"
               p={8}
               bgGradient="linear(to-br, #8B5CF6, #C084FC)"
-              color="white"
+              color={{
+                base: "white",
+                _light: "#4C1D95",  // Dark purple for light mode
+              }}
             >
-              <Heading size="md">Monthly Insight</Heading>
+              <Heading 
+                size="md"
+                color={{
+                  base: "white",
+                  _light: "#4C1D95",
+                }}
+              >
+                Monthly Insight
+              </Heading>
 
-              <Text mt={4} lineHeight="tall">
-                Your expenses have decreased by 20% this month.
-                Keep maintaining your spending habits.
+              <Text 
+                mt={4} 
+                lineHeight="tall"
+                color={{
+                  base: "white",
+                  _light: "#4C1D95",
+                }}
+              >
+                {stats?.total_expenses && stats?.total_income
+                  ? stats.total_expenses > stats.total_income
+                    ? "⚠️ Your expenses exceed your income. Consider reducing spending."
+                    : "✅ Great job! You're spending within your means."
+                  : "Start adding expenses to see insights."}
               </Text>
             </Box>
           </GridItem>

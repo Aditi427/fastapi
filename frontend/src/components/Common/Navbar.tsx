@@ -5,18 +5,25 @@ import {
   HStack,
   IconButton,
   Input,
+  Menu,
   Text,
 } from "@chakra-ui/react"
 
-import { FiBell, FiMoon, FiSearch, FiSun } from "react-icons/fi"
-
+import { FiBell, FiLogOut, FiMoon, FiSearch, FiSun, FiUser } from "react-icons/fi"
 import { useTheme } from "next-themes"
+import { useNavigate } from "@tanstack/react-router"
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme()
+  const navigate = useNavigate()
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light")
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token')
+    navigate({ to: "/login" })
   }
 
   return (
@@ -74,7 +81,6 @@ export default function Navbar() {
           }}
         >
           <FiSearch color="#8B5CF6" />
-
           <Input
             placeholder="Search..."
             border="none"
@@ -123,8 +129,27 @@ export default function Navbar() {
           {theme === "light" ? <FiMoon /> : <FiSun />}
         </IconButton>
 
+        <IconButton
+          aria-label="Logout"
+          rounded="full"
+          bg={{
+            base: "#242429",
+            _light: "#EDE9FE",
+          }}
+          color="#8B5CF6"
+          _hover={{
+            bg: {
+              base: "#2F2F35",
+              _light: "#DDD6FE",
+            },
+          }}
+          onClick={handleLogout}
+        >
+          <FiLogOut />
+        </IconButton>
+
         <Avatar.Root>
-          <Avatar.Fallback name="Aditi" />
+          <Avatar.Fallback name="User" />
         </Avatar.Root>
       </HStack>
     </Flex>

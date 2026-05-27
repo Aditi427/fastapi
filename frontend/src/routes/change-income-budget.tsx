@@ -1,5 +1,3 @@
-// ChangeIncomeBudget.tsx
-
 import {
   Box,
   Button,
@@ -9,14 +7,14 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import { createFileRoute } from "@tanstack/react-router"
-
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useState, useEffect } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
-
 import { FiDollarSign, FiTarget } from "react-icons/fi"
 
 import { Field } from "@/components/ui/field"
 import { InputGroup } from "@/components/ui/input-group"
+import { expenseService } from "@/services/expenseService"
 
 interface ChangeIncomeBudgetForm {
   monthly_income: number
@@ -28,10 +26,16 @@ export const Route = createFileRoute("/change-income-budget")({
 })
 
 function ChangeIncomeBudget() {
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    setValue,
+    formState: { errors },
   } = useForm<ChangeIncomeBudgetForm>({
     defaultValues: {
       monthly_income: 0,
@@ -39,11 +43,42 @@ function ChangeIncomeBudget() {
     },
   })
 
-  const onSubmit: SubmitHandler<ChangeIncomeBudgetForm> = async (data) => {
-    console.log(data)
+  // Load existing data on mount
+  useEffect(() => {
+    loadUserData()
+  }, [])
 
-    // API call here
-    // await updateIncomeBudget(data)
+  const loadUserData = async () => {
+    try {
+      const userData = await expenseService.getUserProfile()
+      setValue('monthly_income', userData.monthly_income || 0)
+      setValue('budget', userData.budget || 0)
+    } catch (error) {
+      console.error('Failed to load user data:', error)
+    }
+  }
+
+  const onSubmit: SubmitHandler<ChangeIncomeBudgetForm> = async (data) => {
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
+    
+    try {
+      await expenseService.updateIncomeBudget(data)
+      
+      setSuccess("Income and budget updated successfully!")
+      
+      // Redirect after 1.5 seconds
+      setTimeout(() => {
+        navigate({ to: "/dashboard" })
+      }, 1500)
+      
+    } catch (error: any) {
+      console.error('Failed to update:', error)
+      setError(error.response?.data?.detail || "Failed to update. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -96,6 +131,34 @@ function ChangeIncomeBudget() {
           Manage your financial limits and monthly income.
         </Text>
 
+        {/* Success Message */}
+        {success && (
+          <Box
+            mb={4}
+            p={3}
+            bg="green.500"
+            color="white"
+            rounded="md"
+            textAlign="center"
+          >
+            {success}
+          </Box>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <Box
+            mb={4}
+            p={3}
+            bg="red.500"
+            color="white"
+            rounded="md"
+            textAlign="center"
+          >
+            {error}
+          </Box>
+        )}
+
         {/* Monthly Income */}
         <Field
           invalid={!!errors.monthly_income}
@@ -134,6 +197,7 @@ function ChangeIncomeBudget() {
               {...register("monthly_income", {
                 required: "Monthly income is required",
                 valueAsNumber: true,
+                min: { value: 0, message: "Income cannot be negative" },
               })}
             />
           </InputGroup>
@@ -178,6 +242,7 @@ function ChangeIncomeBudget() {
               {...register("budget", {
                 required: "Budget is required",
                 valueAsNumber: true,
+                min: { value: 0, message: "Budget cannot be negative" },
               })}
             />
           </InputGroup>
@@ -185,7 +250,7 @@ function ChangeIncomeBudget() {
 
         <Button
           type="submit"
-          loading={isSubmitting}
+          loading={loading}
           w="100%"
           mt={8}
           bg="#8B5CF6"

@@ -23,6 +23,7 @@ from app.models import (
     UsersPublic,
     UserUpdate,
     UserUpdateMe,
+    Category,  # ADD THIS IMPORT
 )
 from app.utils import generate_new_account_email, send_email
 
@@ -125,6 +126,44 @@ def read_user_me(current_user: CurrentUser) -> Any:
     return current_user
 
 
+@router.put("/me/income-budget", response_model=Message)  # ADD THIS ENDPOINT
+def update_income_budget(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser,
+    data: dict,
+) -> Any:
+    """
+    Update user's monthly income and budget.
+    """
+    if "monthly_income" in data:
+        current_user.monthly_income = data["monthly_income"]
+    if "budget" in data:
+        current_user.budget = data["budget"]
+    
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    
+    return Message(message="Income and budget updated successfully")
+
+
+@router.get("/me/profile", response_model=dict)  # ADD THIS ENDPOINT
+def read_user_profile(current_user: CurrentUser) -> Any:
+    """
+    Get current user profile with income and budget.
+    """
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "monthly_income": current_user.monthly_income if hasattr(current_user, 'monthly_income') else 0.00,
+        "budget": current_user.budget if hasattr(current_user, 'budget') else 0.00,
+        "is_active": current_user.is_active,
+        "is_superuser": current_user.is_superuser,
+    }
+
+
 @router.delete("/me", response_model=Message)
 def delete_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     """
@@ -150,8 +189,29 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
             status_code=400,
             detail="The user with this email already exists in the system",
         )
-    user_create = UserCreate.model_validate(user_in)
+    
+    # Create UserCreate object - Make sure UserCreate has monthly_income and budget fields
+    user_create = UserCreate(
+        email=user_in.email,
+        password=user_in.password,
+        full_name=user_in.full_name,
+        monthly_income=user_in.monthly_income,  # ADD THIS
+        budget=user_in.budget,  # ADD THIS
+    )
     user = crud.create_user(session=session, user_create=user_create)
+    
+    # Add default categories for the new user
+    from app.models import Category
+    default_categories = ["Food", "Travel", "Shopping", "Bills", "Entertainment"]
+    for cat_name in default_categories:
+        category = Category(
+            name=cat_name,
+            description=f"{cat_name} expenses",
+            owner_id=user.id
+        )
+        session.add(category)
+    session.commit()
+    
     return user
 
 
