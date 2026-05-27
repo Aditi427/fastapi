@@ -1,23 +1,28 @@
-# Stage 0, "build-stage", based on Node.js, to build and compile the frontend
-FROM node:24 AS build-stage
+# Stage 1: Build the React app
+FROM node:18-alpine AS build-stage
 
 WORKDIR /app
 
-COPY package*.json /app/
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci
 
-RUN npm install
-
-COPY ./ /app/
-
-ARG VITE_API_URL=${VITE_API_URL}
-
+# Copy source code and build
+COPY . .
 RUN npm run build
 
+# Stage 2: Serve with nginx
+FROM nginx:alpine
 
-# Stage 1, based on Nginx, to have only the compiled app, ready for production with Nginx
-FROM nginx:1
+# Copy built files from build stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-COPY --from=build-stage /app/dist/ /usr/share/nginx/html
+# Use Railway's PORT environment variable
+# Alpine nginx uses a different config location
+RUN sed -i 's/80/${PORT}/g' /etc/nginx/conf.d/default.conf
 
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.conf
+# Expose the dynamic port
+EXPOSE ${PORT}
+
+# Start nginx (it will use the PORT we set)
+CMD ["nginx", "-g", "daemon off;"]
