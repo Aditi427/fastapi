@@ -1,5 +1,5 @@
 # Stage 1: Build the React app
-FROM node:18-alpine AS build-stage
+FROM node:22-alpine AS build-stage
 
 WORKDIR /app
 
@@ -18,11 +18,10 @@ FROM nginx:alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Use Railway's PORT environment variable
-# Alpine nginx uses a different config location
 RUN sed -i 's/80/${PORT}/g' /etc/nginx/conf.d/default.conf
 
 # Expose the dynamic port
 EXPOSE ${PORT}
 
-# Start nginx (it will use the PORT we set)
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
