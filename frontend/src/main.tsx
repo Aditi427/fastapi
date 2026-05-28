@@ -11,7 +11,7 @@ import { ApiError, OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/provider"
 import { routeTree } from "./routeTree.gen"
 
-OpenAPI.BASE = import.meta.env.VITE_API_URL
+OpenAPI.BASE = 'https://backend-production-d9ed.up.railway.app'
 OpenAPI.TOKEN = async () => {
   return localStorage.getItem("access_token") || ""
 }
